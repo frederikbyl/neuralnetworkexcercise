@@ -49,8 +49,8 @@ public class NeuralNetworkExcercise1Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(NeuralNetworkExcercise1Application.class, args);
-		runSimpleImproved(8000,150000, 0.7);
-		//runSimpleWithActivationFunction();
+		//runSimpleImproved(5000,1000000, 1);
+		runSimpleWithActivationFunction(5000,150000, 0.5);
 
 	}
 
@@ -63,7 +63,7 @@ public class NeuralNetworkExcercise1Application {
 		}
 	}
 
-	private static void runSimpleWithActivationFunction(int trainingSize) {
+	private static void runSimpleWithActivationFunction(int trainingSize, int numberOfIterations, double learningRate) {
 		ArrayList<HousePriceTrainingItem> trainingSet = HousePriceTrainingSetGenerator.generateTrainingsExamples(trainingSize);
 
 		displayTrainingSet(trainingSet);
@@ -72,34 +72,29 @@ public class NeuralNetworkExcercise1Application {
 		SimpleNeuralNetworkActivationFunction network = new SimpleNeuralNetworkActivationFunction();
 		network.initialise();
 
-		network.train(trainingSet, 150000, 0.1, 1);
-
-		System.out.println("TEST: ");
+		network.train(trainingSet, numberOfIterations, learningRate);
 		HousePriceInput inputTest = new HousePriceInput();
-		inputTest.setNumberOfBathrooms(0.8105);
-		inputTest.setNumberOfRooms(0.8105);
-		inputTest.setSize(0.8105);
+		
+		Random rand = new Random();
+		double networkOutput = 0.0;
+		double realOutput = 0.0;
+		double totalError = 0.0;
+		
+		for(int i = 1; i<101; i++) {
+			inputTest.setNumberOfBathrooms(rand.nextDouble());
+			inputTest.setNumberOfRooms(rand.nextDouble());
+			inputTest.setSize(rand.nextDouble());
+			realOutput = HousePriceTrainingSetGenerator.shouldReturn(inputTest);
+			networkOutput = network.process(inputTest);
+			System.out.println("TEST"+i+" Should be around " + realOutput*1000000 + " : "
+					+ networkOutput*1000000);
+			
+			totalError += Math.abs(realOutput - networkOutput);
 
-		System.out.println("Should be around " + HousePriceTrainingSetGenerator.shouldReturn(inputTest) + " : "
-				+ network.process(inputTest));
+		}
+	
 
-		System.out.println("TEST2: ");
-
-		inputTest.setNumberOfBathrooms(0.386);
-		inputTest.setNumberOfRooms(0.386);
-		inputTest.setSize(0.386);
-
-		System.out.println("Should be around " + HousePriceTrainingSetGenerator.shouldReturn(inputTest) + " : "
-				+ network.process(inputTest));
-
-		System.out.println("TEST3: ");
-
-		inputTest.setNumberOfBathrooms(0.99);
-		inputTest.setNumberOfRooms(0.99);
-		inputTest.setSize(0.99);
-
-		System.out.println("Should be around " + HousePriceTrainingSetGenerator.shouldReturn(inputTest) + " : "
-				+ network.process(inputTest));
+		System.out.println("YOUR NETWORK PERFORMNCE IS: "+totalError*10000);
 		network.outputWeights();
 
 	}

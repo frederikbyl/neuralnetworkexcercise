@@ -21,7 +21,9 @@ public class HousePriceTrainingSetGenerator {
 			input.setNumberOfRooms(numberOfRooms);
 			input.setSize(size);
 			item.setInput(input);
-			item.setPrice((Math.pow(  (Math.pow(numberOfBathRooms,2.0) + numberOfRooms + size)  , 2.0)) / 9.0);
+			//item.setPrice((Math.pow(  (Math.pow(numberOfBathRooms,2.0) + Math.pow(numberOfRooms, 2.0) + Math.pow(size,2.0))  , 2.0)) / 9.0);
+			item.setPrice(Math.pow(  numberOfBathRooms + numberOfRooms + size , 2.0) / 9.0);
+			//item.setPrice((numberOfBathRooms + numberOfRooms + size) / 3.0);
 			
 			list.add(item);
 			
@@ -35,7 +37,9 @@ public class HousePriceTrainingSetGenerator {
 	
 	public static double shouldReturn(HousePriceInput input) {
 		
-		return (Math.pow(  (Math.pow(input.getNumberOfBathrooms(),2.0) + input.getNumberOfRooms() + input.getSize())  , 2.0)) / 9.0;
+		//return (Math.pow(  (Math.pow(input.getNumberOfBathrooms(),2.0) + Math.pow(input.getNumberOfRooms(),2.0) + Math.pow(input.getSize(),2.0))  , 2.0)) / 9.0;
+		return Math.pow(input.getNumberOfBathrooms() + input.getNumberOfRooms() + input.getSize(),2.0)/ 9.0;
+		//return (input.getNumberOfBathrooms() + input.getNumberOfRooms() + input.getSize())/ 3.0;
 		
 	}
 

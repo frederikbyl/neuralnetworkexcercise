@@ -10,8 +10,7 @@ public class SimpleNeuralNetworkActivationFunction {
 	private double [] weights_neuron3 = new double [3];
 	
 	private double lambda = 0; 
-	private double alpha = 0.02; // learning reate
-
+	
 	
 	public void initialise() {
 		Random rand = new Random();
@@ -50,11 +49,11 @@ public class SimpleNeuralNetworkActivationFunction {
 	
 	
 	private double activate(double input) {
-		//double result = 1.0/(1.0+Math.exp(-input));
-		return input;
+		double result = 1.0/(1.0+Math.exp(-input));
+		return result;
 	}
 
-	public double train(ArrayList<HousePriceTrainingItem> trainingSet,  int maxIterations, double learningRate, double minError) {
+	public double train(ArrayList<HousePriceTrainingItem> trainingSet,  int maxIterations, double learningRate) {
 		
 		int number_of_training_examples = trainingSet.size();
 		double [] gradient_neuron1 = new double [4];
@@ -109,7 +108,6 @@ public class SimpleNeuralNetworkActivationFunction {
 				activation_neuron2 = activate(activation_neuron2);
 				
 				activation_neuron3 = weights_neuron3[0] + activation_neuron1 * weights_neuron3[1]+  activation_neuron2 * weights_neuron3[2];
-				//System.out.println("ActivationNeuron: " + activation_neuron1 + " " +activation_neuron2 + " " + activation_neuron3);
 				
 				activation_neuron3 = activate(activation_neuron3);
 				
@@ -120,8 +118,6 @@ public class SimpleNeuralNetworkActivationFunction {
 				error_neuron1 = error_neuron3 * weights_neuron3[1] * activation_neuron1 * (1.0-activation_neuron1) ;
 			
 				cummulated_error = cummulated_error + Math.abs(error_neuron3);
-				if(iteration == 10000)
-					System.out.println("ERROR_NEURON3: " + error_neuron3+ " cumulated : " + cummulated_error);
 				//delta's neuron 1
 				delta_neuron1[0] = delta_neuron1[0] + error_neuron1;
 				delta_neuron1[1] = delta_neuron1[1] + error_neuron1*trainingSet.get(train_example).getInput().getNumberOfBathrooms();
@@ -143,56 +139,46 @@ public class SimpleNeuralNetworkActivationFunction {
 				
 					
 			}
-			//System.out.println("ACTIVATIONS: " + activation_neuron1+" "+ activation_neuron2 + " "+ activation_neuron3);
-			//System.out.println("ERRORS: " + error_neuron1+" "+ error_neuron2 + " "+ error_neuron3);
 			
 			System.out.println(iteration + ": Cummulated error: " +cummulated_error);
-			if(cummulated_error < lowest_cummulated_error) 
-				lowest_cummulated_error = cummulated_error;
-			else
-				return lowest_cummulated_error;
 		
-			if(cummulated_error < 9.692795611276894E-10)
-				return cummulated_error;
 			
 			//calculate gradient1
-			gradient_neuron1[0] = 1.0/(double)number_of_training_examples* delta_neuron1[0] ;
-			gradient_neuron1[1] = 1.0/(double)number_of_training_examples* delta_neuron1[1] + lambda*weights_neuron1[1];
-			gradient_neuron1[2] = 1.0/(double)number_of_training_examples* delta_neuron1[2] + lambda*weights_neuron1[2];
-			gradient_neuron1[3] = 1.0/(double)number_of_training_examples* delta_neuron1[3] + lambda*weights_neuron1[3];
+			gradient_neuron1[0] = delta_neuron1[0] / ((double)number_of_training_examples) ;
+			gradient_neuron1[1] = delta_neuron1[1]/ ((double)number_of_training_examples) + lambda*weights_neuron1[1];
+			gradient_neuron1[2] = delta_neuron1[2]/ ((double)number_of_training_examples) + lambda*weights_neuron1[2];
+			gradient_neuron1[3] = delta_neuron1[3]/ ((double)number_of_training_examples) + lambda*weights_neuron1[3];
 			//calculate gradient2
-			gradient_neuron2[0] =  1.0/(double)number_of_training_examples* delta_neuron2[0] ;
-			gradient_neuron2[1] =  1.0/(double)number_of_training_examples* delta_neuron2[1] + lambda*weights_neuron2[1];
-			gradient_neuron2[2] =  1.0/(double)number_of_training_examples* delta_neuron2[2] + lambda*weights_neuron2[2];
-			gradient_neuron2[3] =  1.0/(double)number_of_training_examples* delta_neuron2[3] + lambda*weights_neuron2[3];
+			gradient_neuron2[0] =  delta_neuron2[0]/ ((double)number_of_training_examples) ;
+			gradient_neuron2[1] =  delta_neuron2[1]/ ((double)number_of_training_examples) + lambda*weights_neuron2[1];
+			gradient_neuron2[2] =  delta_neuron2[2]/ ((double)number_of_training_examples) + lambda*weights_neuron2[2];
+			gradient_neuron2[3] =  delta_neuron2[3]/ ((double)number_of_training_examples) + lambda*weights_neuron2[3];
 			
 			//calculate gradinet3
-			gradient_neuron3[0] = 1.0/(double)number_of_training_examples* delta_neuron3[0] ;
-			gradient_neuron3[1] = 1.0/(double)number_of_training_examples* delta_neuron3[1] + lambda*weights_neuron3[1];
-			gradient_neuron3[2] = 1.0/(double)number_of_training_examples* delta_neuron3[2] + lambda*weights_neuron3[2];
+			gradient_neuron3[0] = delta_neuron3[0]/ ((double)number_of_training_examples) ;
+			gradient_neuron3[1] = delta_neuron3[1]/ ((double)number_of_training_examples) + lambda*weights_neuron3[1];
+			gradient_neuron3[2] = delta_neuron3[2]/ ((double)number_of_training_examples) + lambda*weights_neuron3[2];
 			
 
 			
 
 			//update according to gradient descent and train again
-			weights_neuron1[0] = weights_neuron1[0]  - alpha*gradient_neuron1[0];
-			weights_neuron1[1] = weights_neuron1[1]  - alpha*gradient_neuron1[1];
-			weights_neuron1[2] = weights_neuron1[2]  - alpha*gradient_neuron1[2];
-			weights_neuron1[3] = weights_neuron1[3]  - alpha*gradient_neuron1[3];
+			weights_neuron1[0] = weights_neuron1[0]  - learningRate*gradient_neuron1[0];
+			weights_neuron1[1] = weights_neuron1[1]  - learningRate*gradient_neuron1[1];
+			weights_neuron1[2] = weights_neuron1[2]  - learningRate*gradient_neuron1[2];
+			weights_neuron1[3] = weights_neuron1[3]  - learningRate*gradient_neuron1[3];
 			
 			
-			weights_neuron2[0] = weights_neuron2[0]  - alpha*gradient_neuron2[0];
-			weights_neuron2[1] = weights_neuron2[1]  - alpha*gradient_neuron2[1];
-			weights_neuron2[2] = weights_neuron2[2]  - alpha*gradient_neuron2[2];
-			weights_neuron2[3] = weights_neuron2[3]  - alpha*gradient_neuron2[3];
+			weights_neuron2[0] = weights_neuron2[0]  - learningRate*gradient_neuron2[0];
+			weights_neuron2[1] = weights_neuron2[1]  - learningRate*gradient_neuron2[1];
+			weights_neuron2[2] = weights_neuron2[2]  - learningRate*gradient_neuron2[2];
+			weights_neuron2[3] = weights_neuron2[3]  - learningRate*gradient_neuron2[3];
 			
-			weights_neuron3[0] = weights_neuron3[0]  - alpha*gradient_neuron3[0];
-			weights_neuron3[1] = weights_neuron3[1]  - alpha*gradient_neuron3[1];
-			weights_neuron3[2] = weights_neuron3[2]  - alpha*gradient_neuron3[2];
+			weights_neuron3[0] = weights_neuron3[0]  - learningRate*gradient_neuron3[0];
+			weights_neuron3[1] = weights_neuron3[1]  - learningRate*gradient_neuron3[1];
+			weights_neuron3[2] = weights_neuron3[2]  - learningRate*gradient_neuron3[2];
 		
-			System.out.println("GRADIENTS: " + gradient_neuron1[0]+ " "+ gradient_neuron1[1]+" "+ gradient_neuron1[2]+ " "+gradient_neuron1[3]);
-			System.out.println("WEIGHTS: " + weights_neuron1[0] + " " +weights_neuron1[1] + " "+weights_neuron1[2] + " " + weights_neuron1[3]  );
-			
+				
 		}
 		return error_neuron3;
 	}
