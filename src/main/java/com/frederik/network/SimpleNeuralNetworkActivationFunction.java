@@ -139,8 +139,8 @@ public class SimpleNeuralNetworkActivationFunction {
 				
 					
 			}
-			
-			System.out.println(iteration + ": Cummulated error: " +cummulated_error);
+			//if(iteration % 10000 == 0)
+				System.out.println(iteration + ": Cummulated error: " +cummulated_error);
 		
 			
 			//calculate gradient1
