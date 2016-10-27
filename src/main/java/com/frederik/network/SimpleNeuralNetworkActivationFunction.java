@@ -1,5 +1,10 @@
 package com.frederik.network;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,6 +14,7 @@ public class SimpleNeuralNetworkActivationFunction {
 	private double [] weights_neuron2 = new double [4];
 	private double [] weights_neuron3 = new double [3];
 	
+		
 	private double lambda = 0; 
 	
 	
@@ -47,14 +53,17 @@ public class SimpleNeuralNetworkActivationFunction {
 	}
 
 	
-	
 	private double activate(double input) {
 		double result = 1.0/(1.0+Math.exp(-input));
 		return result;
 	}
 
-	public double train(ArrayList<HousePriceTrainingItem> trainingSet,  int maxIterations, double learningRate) {
+	public double train(ArrayList<HousePriceTrainingItem> trainingSet,  int maxIterations, double learningRate) throws IOException {
+		double [] best_weights_neuron1 = new double [4];
+		double [] best_weights_neuron2 = new double [4];
+		double [] best_weights_neuron3 = new double [3];
 		
+	
 		int number_of_training_examples = trainingSet.size();
 		double [] gradient_neuron1 = new double [4];
 		double [] gradient_neuron2 = new double [4];
@@ -74,7 +83,8 @@ public class SimpleNeuralNetworkActivationFunction {
 		
 		double cummulated_error = Double.MAX_VALUE;
 		double lowest_cummulated_error = Double.MAX_VALUE;
-		
+		Path path = Paths.get("trainingErrorOutput.csv");
+		BufferedWriter writer = Files.newBufferedWriter(path);
 		
 		//repeat until max iterations or minError occurred
 		for(int iteration =0; iteration < maxIterations; iteration++ ) {
@@ -139,9 +149,14 @@ public class SimpleNeuralNetworkActivationFunction {
 				
 					
 			}
-			//if(iteration % 10000 == 0)
-				System.out.println(iteration + ": Cummulated error: " +cummulated_error);
+			writer.write(iteration + "; " +cummulated_error+";\n");
+			System.out.println(iteration + ": Cummulated error: " +cummulated_error);
 		
+			if(cummulated_error < lowest_cummulated_error) {
+				best_weights_neuron1 = weights_neuron1;
+				best_weights_neuron2 = weights_neuron2;
+				best_weights_neuron3 = weights_neuron3;
+			}
 			
 			//calculate gradient1
 			gradient_neuron1[0] = delta_neuron1[0] / ((double)number_of_training_examples) ;
@@ -180,6 +195,10 @@ public class SimpleNeuralNetworkActivationFunction {
 		
 				
 		}
+		
+		weights_neuron1 = best_weights_neuron1;
+		weights_neuron2 = best_weights_neuron2;
+		weights_neuron3 = best_weights_neuron3;
 		return error_neuron3;
 	}
 	

@@ -242,8 +242,8 @@ public class SimpleNeuralNetworkImproved {
 			}
 			
 			
-			if(iteration % 10000 == 0)
-				System.out.println(iteration + ";" +cummulated_error+";");
+			
+			System.out.println(iteration + ";" +cummulated_error+";");
 //			if(cummulated_error < lowest_cummulated_error) 
 //				lowest_cummulated_error = cummulated_error;
 //			else
