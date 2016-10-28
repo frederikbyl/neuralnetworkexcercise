@@ -102,7 +102,7 @@ public class NeuralNetworkExcercise1Application {
 			realOutput = HousePriceTrainingSetGenerator.shouldReturn(inputTest);
 			networkOutput = network.process(inputTest);
 			writer.write(i + "; " + realOutput * 1000000 + " ; " + networkOutput * 1000000 + "; \n");
-			
+			System.out.println(i + ": " +networkOutput * 1000000 + ": should be -> "+ realOutput * 1000000 );
 
 			totalError += Math.abs(realOutput - networkOutput);
 
